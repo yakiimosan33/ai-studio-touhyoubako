@@ -72,7 +72,7 @@ export default async function handler(req, res) {
                     case 2: return "Difyでアプリ開発";
                     case 3: return "メルマガ制作AIチーム";
                     case 4: return "続！バイブコーディング！";
-                    case 5: return "sunoで収益化！";
+                    case 5: return "AI音楽アーティストにチャレンジ！";
                     default: return "";
                 }
             })();

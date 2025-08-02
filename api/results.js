@@ -38,7 +38,7 @@ export default async function handler(req, res) {
             "Difyでアプリ開発", 
             "メルマガ制作AIチーム",
             "続！バイブコーディング！",
-            "sunoで収益化！"
+            "AI音楽アーティストにチャレンジ！"
         ];
         
         // 初期化
