@@ -1,6 +1,7 @@
 let selectedVotes = [];
 const maxVotes = 2;
 let countdownInterval;
+let userId;
 
 const themes = {
     1: "AIショート動画制作チーム",
@@ -75,6 +76,7 @@ async function submitVotes() {
             },
             body: JSON.stringify({
                 votes: selectedVotes,
+                userId: userId,
                 timestamp: new Date().toISOString()
             })
         });
@@ -85,7 +87,8 @@ async function submitVotes() {
             // 集計結果を表示
             await showResults();
         } else {
-            throw new Error('投票の送信に失敗しました');
+            const errorData = await response.json();
+            throw new Error(errorData.error || '投票の送信に失敗しました');
         }
     } catch (error) {
         alert('エラーが発生しました: ' + error.message);
@@ -202,8 +205,56 @@ function startCountdown() {
     }, 30000);
 }
 
+function generateUserId() {
+    // localStorage からユーザーIDを取得、なければ新規作成
+    let id = localStorage.getItem('voting_user_id');
+    if (!id) {
+        id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('voting_user_id', id);
+    }
+    return id;
+}
+
+async function checkUserVotingStatus() {
+    try {
+        const response = await fetch('/api/check-vote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: userId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.hasVoted) {
+            // すでに投票済みの場合は結果を表示
+            document.getElementById('voting-area').innerHTML = `
+                <div class="already-voted-message">
+                    <h2>投票済みです</h2>
+                    <p>このブラウザからはすでに投票が完了しています。</p>
+                    <p>投票を変更したい場合は管理者にお問い合わせください。</p>
+                </div>
+            `;
+            await showResults();
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('投票状況チェックエラー:', error);
+        return true; // エラー時は投票を許可
+    }
+}
+
 // 初期化
-document.addEventListener('DOMContentLoaded', () => {
-    updateUI();
-    startCountdown();
+document.addEventListener('DOMContentLoaded', async () => {
+    userId = generateUserId();
+    
+    // 投票状況をチェック
+    const canVote = await checkUserVotingStatus();
+    
+    if (canVote) {
+        updateUI();
+        startCountdown();
+    }
 });

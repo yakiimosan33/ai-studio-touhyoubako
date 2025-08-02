@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: '投票は締切りました' });
         }
         
-        const { votes, timestamp } = req.body;
+        const { votes, userId, timestamp } = req.body;
         
         // バリデーション
         if (!votes || !Array.isArray(votes) || votes.length === 0) {
@@ -33,6 +33,10 @@ export default async function handler(req, res) {
         
         if (votes.length > 2) {
             return res.status(400).json({ error: '投票は2票までです' });
+        }
+        
+        if (!userId) {
+            return res.status(400).json({ error: 'ユーザーIDが必要です' });
         }
         
         // 環境変数の確認
@@ -45,8 +49,20 @@ export default async function handler(req, res) {
             auth: process.env.NOTION_TOKEN,
         });
         
-        // 投票者IDを生成
-        const userId = `User_${Date.now()}`;
+        // 既存の投票をチェック
+        const existingVotes = await notion.databases.query({
+            database_id: process.env.NOTION_DATABASE_ID,
+            filter: {
+                property: "投票者ID",
+                title: {
+                    equals: userId
+                }
+            }
+        });
+        
+        if (existingVotes.results.length > 0) {
+            return res.status(400).json({ error: 'すでに投票済みです' });
+        }
         
         // 各投票を別々のレコードとして保存
         const promises = votes.map(async (voteId, index) => {
