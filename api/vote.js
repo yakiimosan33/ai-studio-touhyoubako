@@ -16,6 +16,14 @@ export default async function handler(req, res) {
     }
     
     try {
+        // 締切チェック (日本時間 2024年8月24日 23:50)
+        const deadline = new Date('2024-08-24T23:50:00+09:00');
+        const now = new Date();
+        
+        if (now > deadline) {
+            return res.status(400).json({ error: '投票は締切りました' });
+        }
+        
         const { votes, timestamp } = req.body;
         
         // バリデーション

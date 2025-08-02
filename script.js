@@ -1,5 +1,6 @@
 let selectedVotes = [];
 const maxVotes = 2;
+let countdownInterval;
 
 const themes = {
     1: "AIショート動画制作チーム",
@@ -135,7 +136,74 @@ async function showResults() {
     }
 }
 
+async function checkDeadline() {
+    try {
+        const response = await fetch('/api/deadline');
+        const data = await response.json();
+        
+        if (data.isExpired) {
+            // 投票が締切られた場合
+            document.getElementById('voting-area').innerHTML = `
+                <div class="expired-message">
+                    <h2>投票は締切りました</h2>
+                    <p>投票期間: 2024年8月24日 23:50まで</p>
+                </div>
+            `;
+            await showResults();
+            return false;
+        }
+        
+        // カウントダウンを更新
+        updateCountdown(data.timeRemaining);
+        return true;
+    } catch (error) {
+        console.error('締切チェックエラー:', error);
+        return true; // エラー時は投票を継続
+    }
+}
+
+function updateCountdown(timeRemaining) {
+    const countdownElement = document.getElementById('countdown');
+    
+    if (timeRemaining <= 0) {
+        countdownElement.textContent = '投票締切';
+        countdownElement.style.color = '#e74c3c';
+        return;
+    }
+    
+    const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    
+    let countdownText = '';
+    if (days > 0) {
+        countdownText = `残り ${days}日 ${hours}時間 ${minutes}分`;
+    } else if (hours > 0) {
+        countdownText = `残り ${hours}時間 ${minutes}分 ${seconds}秒`;
+    } else {
+        countdownText = `残り ${minutes}分 ${seconds}秒`;
+        countdownElement.style.color = '#e74c3c'; // 1時間未満は赤色
+    }
+    
+    countdownElement.textContent = countdownText;
+}
+
+function startCountdown() {
+    // 初回チェック
+    checkDeadline();
+    
+    // 30秒ごとにチェック
+    countdownInterval = setInterval(async () => {
+        const isActive = await checkDeadline();
+        if (!isActive) {
+            clearInterval(countdownInterval);
+        }
+    }, 30000);
+}
+
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
     updateUI();
+    startCountdown();
 });
