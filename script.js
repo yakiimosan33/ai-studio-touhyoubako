@@ -81,8 +81,8 @@ async function submitVotes() {
         if (response.ok) {
             // 投票エリアを非表示
             document.getElementById('voting-area').style.display = 'none';
-            // 結果メッセージを表示
-            document.getElementById('result-message').style.display = 'block';
+            // 集計結果を表示
+            await showResults();
         } else {
             throw new Error('投票の送信に失敗しました');
         }
@@ -90,6 +90,48 @@ async function submitVotes() {
         alert('エラーが発生しました: ' + error.message);
         submitBtn.disabled = false;
         submitBtn.textContent = '投票を送信';
+    }
+}
+
+async function showResults() {
+    try {
+        const response = await fetch('/api/results');
+        const data = await response.json();
+        
+        if (data.success) {
+            // 結果表示エリアを作成
+            const resultsHTML = `
+                <div class="results-container">
+                    <h2>投票結果</h2>
+                    <p class="vote-summary">総投票数: ${data.totalVotes}票 / 投票者数: 約${data.totalVoters}人</p>
+                    <div class="results-chart">
+                        ${data.results.map(result => `
+                            <div class="result-item">
+                                <div class="result-header">
+                                    <span class="result-theme">${result.id}. ${result.theme}</span>
+                                    <span class="result-votes">${result.votes}票 (${result.percentage}%)</span>
+                                </div>
+                                <div class="result-bar">
+                                    <div class="result-fill" style="width: ${result.percentage}%"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <p class="thank-you">投票ありがとうございました！</p>
+                </div>
+            `;
+            
+            document.getElementById('result-message').innerHTML = resultsHTML;
+            document.getElementById('result-message').style.display = 'block';
+        } else {
+            throw new Error('結果の取得に失敗しました');
+        }
+    } catch (error) {
+        document.getElementById('result-message').innerHTML = `
+            <p>投票ありがとうございました！</p>
+            <p>結果の表示にエラーが発生しました。</p>
+        `;
+        document.getElementById('result-message').style.display = 'block';
     }
 }
 
