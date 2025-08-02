@@ -149,7 +149,7 @@ async function checkDeadline() {
             document.getElementById('voting-area').innerHTML = `
                 <div class="expired-message">
                     <h2>投票は締切りました</h2>
-                    <p>投票期間: 2024年8月24日 23:50まで</p>
+                    <p>投票期間: 2025年8月24日 23:50まで</p>
                 </div>
             `;
             await showResults();
