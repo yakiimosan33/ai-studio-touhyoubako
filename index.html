@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIクリエイターズ・スタジオ 8月テーマ投票</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>AIクリエイターズ・スタジオ 8月テーマ</h1>
+        <p class="description">興味のあるテーマに投票してね！あなたの1票で僕の9月が決まります！</p>
+        
+        <div id="voting-area">
+            <p class="vote-count">残り投票数: <span id="remaining-votes">2</span>票</p>
+            
+            <div class="options">
+                <div class="option" data-id="1">
+                    <span class="option-number">1.</span>
+                    <span class="option-text">AIショート動画制作チーム</span>
+                    <button class="vote-btn" onclick="vote(1)">投票する</button>
+                </div>
+                
+                <div class="option" data-id="2">
+                    <span class="option-number">2.</span>
+                    <span class="option-text">Difyでアプリ開発</span>
+                    <button class="vote-btn" onclick="vote(2)">投票する</button>
+                </div>
+                
+                <div class="option" data-id="3">
+                    <span class="option-number">3.</span>
+                    <span class="option-text">メルマガ制作AIチーム</span>
+                    <button class="vote-btn" onclick="vote(3)">投票する</button>
+                </div>
+                
+                <div class="option" data-id="4">
+                    <span class="option-number">4.</span>
+                    <span class="option-text">続！バイブコーディング！</span>
+                    <button class="vote-btn" onclick="vote(4)">投票する</button>
+                </div>
+                
+                <div class="option" data-id="5">
+                    <span class="option-number">5.</span>
+                    <span class="option-text">sunoで収益化！</span>
+                    <button class="vote-btn" onclick="vote(5)">投票する</button>
+                </div>
+            </div>
+            
+            <div id="selected-votes" class="selected-votes">
+                <h3>あなたの投票:</h3>
+                <ul id="vote-list"></ul>
+            </div>
+            
+            <button id="submit-btn" class="submit-btn" onclick="submitVotes()" disabled>投票を送信</button>
+        </div>
+        
+        <div id="result-message" class="result-message" style="display: none;">
+            <p>投票ありがとうございました！</p>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
