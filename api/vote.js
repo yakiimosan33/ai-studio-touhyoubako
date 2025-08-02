@@ -37,46 +37,59 @@ export default async function handler(req, res) {
             auth: process.env.NOTION_TOKEN,
         });
         
-        // 投票データを作成
-        const voteThemes = votes.map(voteId => {
-            switch(voteId) {
-                case 1: return "AIショート動画制作チーム";
-                case 2: return "Difyでアプリ開発";
-                case 3: return "メルマガ制作AIチーム";
-                case 4: return "続！バイブコーディング！";
-                case 5: return "sunoで収益化！";
-                default: return "";
-            }
-        }).filter(theme => theme !== "");
+        // 投票者IDを生成
+        const userId = `User_${Date.now()}`;
         
-        // Notionデータベースに追加
-        const response = await notion.pages.create({
-            parent: {
-                database_id: process.env.NOTION_DATABASE_ID
-            },
-            properties: {
-                "投票者ID": {
-                    title: [{
-                        text: {
-                            content: `User_${Date.now()}`
-                        }
-                    }]
-                },
-                "投票テーマ": {
-                    multi_select: voteThemes.map(theme => ({ name: theme }))
-                },
-                "投票日時": {
-                    date: {
-                        start: timestamp
-                    }
-                },
-                "投票数": {
-                    number: votes.length
+        // 各投票を別々のレコードとして保存
+        const promises = votes.map(async (voteId, index) => {
+            const voteTheme = (() => {
+                switch(voteId) {
+                    case 1: return "AIショート動画制作チーム";
+                    case 2: return "Difyでアプリ開発";
+                    case 3: return "メルマガ制作AIチーム";
+                    case 4: return "続！バイブコーディング！";
+                    case 5: return "sunoで収益化！";
+                    default: return "";
                 }
-            }
+            })();
+            
+            if (voteTheme === "") return null;
+            
+            return await notion.pages.create({
+                parent: {
+                    database_id: process.env.NOTION_DATABASE_ID
+                },
+                properties: {
+                    "投票者ID": {
+                        title: [{
+                            text: {
+                                content: userId
+                            }
+                        }]
+                    },
+                    "投票テーマ": {
+                        multi_select: [{ name: voteTheme }]
+                    },
+                    "投票日時": {
+                        date: {
+                            start: timestamp
+                        }
+                    },
+                    "投票数": {
+                        number: 1
+                    }
+                }
+            });
         });
         
-        res.status(200).json({ success: true, id: response.id });
+        // 全ての投票を並行して処理
+        const responses = await Promise.all(promises.filter(p => p !== null));
+        
+        res.status(200).json({ 
+            success: true, 
+            count: responses.length,
+            ids: responses.map(r => r.id)
+        });
         
     } catch (error) {
         console.error('投票エラー:', error);
