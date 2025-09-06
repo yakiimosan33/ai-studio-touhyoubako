@@ -159,8 +159,8 @@ app.get('/api/results', async (req, res) => {
 // 投票締切チェックエンドポイント
 app.get('/api/deadline', (req, res) => {
     try {
-        // 投票締切日時: 2025年10月24日 23:50 JST
-        const deadline = new Date('2025-10-24T23:50:00+09:00');
+        // 投票締切日時: 2025年9月24日 23:50 JST
+        const deadline = new Date('2025-09-24T23:50:00+09:00');
         const now = new Date();
         
         const timeRemaining = deadline.getTime() - now.getTime();
