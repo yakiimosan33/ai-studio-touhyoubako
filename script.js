@@ -4,11 +4,10 @@ let countdownInterval;
 let userId;
 
 const themes = {
-    1: "AIショート動画制作チーム",
+    1: "AI音楽アーティスト制作",
     2: "Difyでアプリ開発",
-    3: "メルマガ制作AIチーム",
-    4: "続！バイブコーディング！",
-    5: "AI音楽アーティストにチャレンジ！"
+    3: "タスク管理をAIで効率化",
+    4: "バイブコーディングその３"
 };
 
 function updateUI() {
@@ -100,9 +99,14 @@ async function submitVotes() {
 async function showResults() {
     try {
         const response = await fetch('/api/results');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const data = await response.json();
         
-        if (data.success) {
+        if (data.success && data.results) {
             // 結果表示エリアを作成
             const resultsHTML = `
                 <div class="results-container">
@@ -128,12 +132,17 @@ async function showResults() {
             document.getElementById('result-message').innerHTML = resultsHTML;
             document.getElementById('result-message').style.display = 'block';
         } else {
-            throw new Error('結果の取得に失敗しました');
+            throw new Error(data.error || '結果データの形式が正しくありません');
         }
     } catch (error) {
+        console.error('結果表示エラー:', error);
         document.getElementById('result-message').innerHTML = `
-            <p>投票ありがとうございました！</p>
-            <p>結果の表示にエラーが発生しました。</p>
+            <div class="results-container">
+                <h2>投票ありがとうございました！</h2>
+                <p>結果の表示にエラーが発生しました。</p>
+                <p class="error-detail">エラー詳細: ${error.message}</p>
+                <p>管理者にお問い合わせいただくか、しばらく時間をおいて再度アクセスしてください。</p>
+            </div>
         `;
         document.getElementById('result-message').style.display = 'block';
     }
@@ -149,7 +158,7 @@ async function checkDeadline() {
             document.getElementById('voting-area').innerHTML = `
                 <div class="expired-message">
                     <h2>投票は締切りました</h2>
-                    <p>投票期間: 2025年8月24日 23:50まで</p>
+                    <p>投票期間: 2025年9月24日 23:50まで</p>
                 </div>
             `;
             await showResults();
