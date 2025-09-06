@@ -68,11 +68,10 @@ export default async function handler(req, res) {
         const promises = votes.map(async (voteId, index) => {
             const voteTheme = (() => {
                 switch(voteId) {
-                    case 1: return "AIショート動画制作チーム";
+                    case 1: return "AI音楽アーティスト制作";
                     case 2: return "Difyでアプリ開発";
-                    case 3: return "メルマガ制作AIチーム";
-                    case 4: return "続！バイブコーディング！";
-                    case 5: return "AI音楽アーティストにチャレンジ！";
+                    case 3: return "タスク管理をAIで効率化";
+                    case 4: return "バイブコーディングその３";
                     default: return "";
                 }
             })();
