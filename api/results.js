@@ -34,11 +34,10 @@ export default async function handler(req, res) {
         // 投票結果を集計
         const voteCounts = {};
         const themes = [
-            "AIショート動画制作チーム",
-            "Difyでアプリ開発", 
-            "メルマガ制作AIチーム",
-            "続！バイブコーディング！",
-            "AI音楽アーティストにチャレンジ！"
+            "AI音楽アーティスト制作",
+            "Difyでアプリ開発",
+            "タスク管理をAIで効率化",
+            "バイブコーディングその３"
         ];
         
         // 初期化
