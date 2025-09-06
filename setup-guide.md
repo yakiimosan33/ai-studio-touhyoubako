@@ -6,11 +6,9 @@ NotionのデータベースIDは、URLから取得できます。
 
 ### URLの形式:
 ```
-https://www.notion.so/656027bcd3ff4ef1803a50669e2e7e4f?v=5cd26d4ea869472ba86a06d6e4fd698b
+https://www.notion.so/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?v=xxxxxxxxxxxxxxxxxxxx
                       ↑ここの32文字がデータベースID
 ```
-
-あなたのデータベースIDは: `656027bcd3ff4ef1803a50669e2e7e4f`
 
 ## 2. .envファイルの作成
 
@@ -19,7 +17,7 @@ https://www.notion.so/656027bcd3ff4ef1803a50669e2e7e4f?v=5cd26d4ea869472ba86a06d
 ```env
 # Notion API設定
 NOTION_TOKEN=あなたのNotion統合トークン
-NOTION_DATABASE_ID=656027bcd3ff4ef1803a50669e2e7e4f
+NOTION_DATABASE_ID=あなたのNotionデータベースID
 
 # サーバー設定
 PORT=3000
