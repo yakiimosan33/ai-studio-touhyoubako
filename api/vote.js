@@ -16,8 +16,8 @@ export default async function handler(req, res) {
     }
     
     try {
-        // 締切チェック (日本時間 2025年8月24日 23:50)
-        const deadline = new Date('2025-08-24T23:50:00+09:00');
+        // 締切チェック (日本時間 2025年9月24日 23:50)
+        const deadline = new Date('2025-09-24T23:50:00+09:00');
         const now = new Date();
         
         if (now > deadline) {
